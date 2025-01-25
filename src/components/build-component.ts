@@ -246,7 +246,10 @@ export default (
           for (const trait of model.getTraits()) {
             this.listenTo(trait, "change:value", () => this.updateChart(trait));
           }
-          this.addNewTraitGroup(model);
+          const alreadyLoaded = model.getTrait(`${DATASET_DATA}-1`);
+          if (alreadyLoaded == null) {
+            this.addNewTraitGroup(model);
+          }
         },
         onRender({ model }) {
           const attributes = model.getAttributes();
