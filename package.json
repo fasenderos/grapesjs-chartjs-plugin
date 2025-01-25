@@ -1,6 +1,6 @@
 {
   "name": "grapesjs-chartjs-plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Grapesjs Chartjs Plugin",
   "main": "dist/index.js",
   "author": "Andrea Fassina <fasenderos@gmail.com>",
