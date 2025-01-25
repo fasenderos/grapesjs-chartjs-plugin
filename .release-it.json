@@ -25,11 +25,11 @@
         "types": [
           { "type": "feat", "section": "Features" },
           { "type": "fix", "section": "Bug Fixes" },
-          { "type": "chore", "section": "Chore" },
-          { "type": "docs", "section": "Documentation" },
-          { "type": "refactor", "section": "Refactoring" },
-          { "type": "perf", "section": "Performance Improvement" },
-          { "type": "test", "section": "Test" },
+          { "type": "chore", "hidden": true },
+          { "type": "docs", "hidden": true },
+          { "type": "refactor", "hidden": true },
+          { "type": "perf", "hidden": true },
+          { "type": "test", "hidden": true },
           { "type": "style", "hidden": true }
         ]
       }
