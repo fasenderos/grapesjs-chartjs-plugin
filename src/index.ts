@@ -12,7 +12,7 @@ export type ChartjsPluginOptions = {
 
 const plugin: Plugin<ChartjsPluginOptions> = (editor, opts = {}) => {
   // Add ChartjsPlugin Style
-  document.head.insertAdjacentHTML("beforeend", `<style>${style}</style>`)
+  document.head.insertAdjacentHTML("beforeend", `<style>${style}</style>`);
   return loadChartJs(() => {
     const options: Required<ChartjsPluginOptions> = {
       ...{
