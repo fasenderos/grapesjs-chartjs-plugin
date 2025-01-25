@@ -53,6 +53,8 @@ export default (
   editor: Editor,
   { type, ...options }: ChartComponentOptions,
 ) => {
+  const datasetType = options.datasetType ?? "labels-data";
+
   const getNewTraitsGroup = (
     selectedComponent?: Component,
   ): { group: TraitProperties[]; id: number } => {
@@ -106,6 +108,16 @@ export default (
       value: `#${id} ${DEFAULT_OPTIONS.label}`,
       placeholder: DEFAULT_OPTIONS.label,
     });
+    if (datasetType !== "labels-data") {
+      newTraitsGroup.push({
+        type: "text",
+        label: "Labels",
+        name: `${CHART_LABELS}-${id}`,
+        category,
+        value: options.defaultLabels ?? DEFAULT_OPTIONS.labels,
+        placeholder: options.defaultLabels ?? DEFAULT_OPTIONS.labels,
+      });
+    }
     newTraitsGroup.push({
       type: "text",
       label: "Values",
@@ -138,12 +150,15 @@ export default (
     if (options?.optionalDatasetProperties?.length) {
       for (const {
         property,
-        ...traitProps
+        type,
+        traitOptions,
+        ...rest
       } of options.optionalDatasetProperties) {
         newTraitsGroup.push({
-          ...traitProps,
+          ...traitOptions,
+          type,
           label:
-            traitProps.label ??
+            traitOptions?.label ??
             `${property.charAt(0).toUpperCase() + property.slice(1)}`,
           name: `${DATASET_OPTIONAL_PROPERTY}-${property}-${id}`,
           category,
@@ -161,60 +176,66 @@ export default (
             "data-gjs-type": `chartjs-${type}`,
           },
           unstylable: ["width", "height"],
-          traits: [
-            {
-              type: "text",
-              label: "Labels",
-              name: CHART_LABELS,
-              category: chartSettingCategory,
-              value: options.defaultLabels ?? DEFAULT_OPTIONS.labels,
-              placeholder: options.defaultLabels ?? DEFAULT_OPTIONS.labels,
-            },
-            {
-              type: "text",
-              label: "Title",
-              name: CHART_TITLE,
-              category: chartSettingCategory,
-              value: DEFAULT_OPTIONS.title,
-              placeholder: "Chart title",
-            },
-            {
-              type: "text",
-              label: "Subtitle",
-              name: CHART_SUBTITLE,
-              category: chartSettingCategory,
-              value: DEFAULT_OPTIONS.subtitle,
-              placeholder: "Chart subtitle",
-            },
-            {
-              type: "number",
-              label: "Width",
-              name: CHART_WIDTH,
-              category: chartSettingCategory,
-              value: DEFAULT_OPTIONS.width,
-              placeholder: "300",
-            },
-            {
-              type: "number",
-              label: "Height",
-              name: CHART_HEIGHT,
-              category: chartSettingCategory,
-              value: DEFAULT_OPTIONS.height,
-              placeholder: "300",
-            },
-            {
-              type: "button",
-              text: "Add Data Set",
-              full: true,
-              name: ADD_DATASET,
-              category: chartSettingCategory,
-              command(editor, _trait) {
-                const component = editor.getSelected();
-                // @ts-ignore
-                component?.view?.addNewTraitGroup(component);
+          traits: (() => {
+            const traits: TraitProperties[] = [
+              {
+                type: "text",
+                label: "Title",
+                name: CHART_TITLE,
+                category: chartSettingCategory,
+                value: DEFAULT_OPTIONS.title,
+                placeholder: "Chart title",
               },
-            },
-          ],
+              {
+                type: "text",
+                label: "Subtitle",
+                name: CHART_SUBTITLE,
+                category: chartSettingCategory,
+                value: DEFAULT_OPTIONS.subtitle,
+                placeholder: "Chart subtitle",
+              },
+              {
+                type: "number",
+                label: "Width",
+                name: CHART_WIDTH,
+                category: chartSettingCategory,
+                value: DEFAULT_OPTIONS.width,
+                placeholder: "300",
+              },
+              {
+                type: "number",
+                label: "Height",
+                name: CHART_HEIGHT,
+                category: chartSettingCategory,
+                value: DEFAULT_OPTIONS.height,
+                placeholder: "300",
+              },
+              {
+                type: "button",
+                text: "Add Data Set",
+                full: true,
+                name: ADD_DATASET,
+                category: chartSettingCategory,
+                command(editor: Editor) {
+                  const component = editor.getSelected();
+                  // @ts-ignore
+                  component?.view?.addNewTraitGroup(component);
+                },
+              },
+            ];
+
+            if (datasetType === "labels-data") {
+              traits.unshift({
+                type: "text",
+                label: "Labels",
+                name: CHART_LABELS,
+                category: chartSettingCategory,
+                value: options.defaultLabels ?? DEFAULT_OPTIONS.labels,
+                placeholder: options.defaultLabels ?? DEFAULT_OPTIONS.labels,
+              });
+            }
+            return traits;
+          })(),
         },
       },
       view: {
@@ -319,7 +340,7 @@ export default (
                 break;
               }
               case CHART_LABELS: {
-                this.updateChartLabels(value);
+                this.updateChartLabels(value, index);
                 break;
               }
               case CHART_TITLE:
@@ -358,12 +379,17 @@ export default (
                 } else if (traitName?.includes(DATASET_BORDER_COLOR)) {
                   this.updateChartDatasetBorderColor(value, index, colorIndex);
                 } else if (traitName?.includes(DATASET_OPTIONAL_PROPERTY)) {
-                  this.updateOptionalDatasetProperty(
-                    trait,
-                    traitName,
-                    value,
-                    index,
-                  );
+                  if (datasetType === "labels-data") {
+                    this.updateOptionalDatasetProperty(
+                      trait,
+                      traitName,
+                      value,
+                      index,
+                    );
+                  } else {
+                    const type = traitName.split("-").pop();
+                    this.updateChartByDatasetType(type, value, index);
+                  }
                 }
                 break;
               }
@@ -377,6 +403,7 @@ export default (
             type,
             backgroundColor: ["rgba(54, 162, 235, 0.5)"],
             borderColor: ["rgb(54, 162, 235)"],
+            data: [],
           });
         },
         removeDataset(index: number): void {
@@ -389,9 +416,7 @@ export default (
           if (!this.chart.data.datasets[index]) {
             this.chart.data.datasets[index] = { type };
           }
-          this.chart.data.datasets[index].data = value
-            ? value.split(",").map(Number)
-            : [];
+          this.updateChartByDatasetType("data", value, index);
         },
         updateChartDatasetLabel(value: string, index: number): void {
           if (!this.chart.data.datasets[index]) {
@@ -499,8 +524,8 @@ export default (
             }
           }
         },
-        updateChartLabels(value: string): void {
-          this.chart.data.labels = value ? value.split(",") : [];
+        updateChartLabels(value: string, index: number): void {
+          this.updateChartByDatasetType("labels", value, index);
         },
         updateChartTitle(value: string): void {
           this.chart.options.plugins = {
@@ -532,6 +557,61 @@ export default (
               if (attributes?.[trait.id] === "") newValue = true;
             }
             this.chart.data.datasets[index][property] = newValue;
+          }
+        },
+        updateChartByDatasetType(
+          type: "labels" | "data" | "radial",
+          value: string,
+          index: number,
+        ) {
+          if (datasetType === "labels-data") {
+            if (type === "labels") {
+              this.chart.data.labels = value
+                ? value.split(",").map((x) => x.trim())
+                : [];
+            } else {
+              this.chart.data.datasets[index].data = value
+                ? value.split(",").map((x) => Number.parseFloat(x.trim()))
+                : [];
+            }
+          } else {
+            // can be x-y or x-y-r
+            // x => labels
+            // y => data
+            // r => radial
+            const coordiantes = datasetType.split("-");
+            const axis =
+              type === "labels"
+                ? coordiantes[0]
+                : type === "data"
+                  ? coordiantes[1]
+                  : coordiantes[2];
+            if (axis != null) {
+              const oldValues = [
+                ...(this.chart.data.datasets[index].data as Record<
+                  string,
+                  unknown
+                >[]),
+              ];
+              const newValues =
+                value?.split(",").map((x) => Number.parseFloat(x.trim())) ?? [];
+              const maxLength =
+                newValues.length >= oldValues.length
+                  ? newValues.length
+                  : oldValues.length;
+
+              const results = [];
+              for (let i = 0; i < maxLength; i++) {
+                const data = {
+                  // copy old values
+                  ...(oldValues[i] != null ? oldValues[i] : {}),
+                  ...(newValues[i] != null ? { [axis]: newValues[i] } : {}),
+                };
+                if (newValues[i] == null) delete data[axis];
+                results.push(data);
+              }
+              this.chart.data.datasets[index].data = [...results];
+            }
           }
         },
         addCanvas(): void {

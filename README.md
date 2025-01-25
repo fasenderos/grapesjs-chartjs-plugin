@@ -2,6 +2,8 @@
 
 ### [Chart.js](https://www.chartjs.org/) plugin for Grapesjs
 
+![Image](https://github.com/user-attachments/assets/4fc965dd-0f8d-4fb8-9e1d-a41a308e9471)
+
 [DEMO](##)
 > **Provide a live demo of your plugin**
 For a better user engagement create a simple live demo by using services like [JSFiddle](https://jsfiddle.net) [CodeSandbox](https://codesandbox.io) [CodePen](https://codepen.io) and link it here in your README (attaching a screenshot/gif will also be a plus).

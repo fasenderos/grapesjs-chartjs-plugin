@@ -13,7 +13,7 @@ export default (
     category: "Charts",
     content: {
       tagName: "div",
-      type: `chartjs-${type}`
+      type: `chartjs-${type}`,
     },
     media: icon,
   };
