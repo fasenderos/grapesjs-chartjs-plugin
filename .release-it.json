@@ -13,7 +13,8 @@
     "tagArgs": ["-s"]
   },
   "npm": {
-    "publish": false
+    "publish": true,
+    "access": "public"
   },
   "plugins": {
     "@release-it/conventional-changelog": {

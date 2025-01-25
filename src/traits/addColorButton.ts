@@ -1,5 +1,4 @@
 import type { Category, Component, Editor, Trait } from "grapesjs";
-import "./style.css";
 import {
   ADD_BACKGROUND,
   DATASET_BACKGROUND_COLOR,

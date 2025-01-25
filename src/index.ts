@@ -4,12 +4,15 @@ import { loadChartJs } from "./charjsLoader";
 import loadBlocks from "./loadBlocks";
 import loadComponents from "./loadComponents";
 import loadTraits from "./loadTraits";
+import style from "./style";
 
 export type ChartjsPluginOptions = {
   chartjsOptions?: ChartOptions;
 };
 
 const plugin: Plugin<ChartjsPluginOptions> = (editor, opts = {}) => {
+  // Add ChartjsPlugin Style
+  document.head.insertAdjacentHTML("beforeend", `<style>${style}</style>`)
   return loadChartJs(() => {
     const options: Required<ChartjsPluginOptions> = {
       ...{

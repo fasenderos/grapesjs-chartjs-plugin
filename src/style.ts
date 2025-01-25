@@ -1,4 +1,4 @@
-.cjs-button-wrapper {
+const style = `.cjs-button-wrapper {
   padding: 5px 0px;
   display: flex;
   align-items: center;
@@ -26,4 +26,5 @@
 .cjs-button-disabled {
   opacity: 0.2 !important;
   cursor: auto !important;
-}
+}`;
+export default style;
