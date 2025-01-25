@@ -16,6 +16,12 @@ export const DATASET_DATA = "cjs-dataset-data";
 export const DATASET_BACKGROUND_COLOR = "cjs-dataset-background-color";
 export const DATASET_BORDER_COLOR = "cjs-dataset-border-color";
 export const DATASET_BORDER_WIDTH = "cjs-dataset-border-width";
+export const DATASET_OPTIONAL_PROPERTY = "cjs-dataset-custom"
+
+type ChartOptionalDatasetProperties = TraitProperties & {
+  property: string;
+  type: "text" | "number" | "select" | "checkbox" | "color" | "button";
+};
 
 export type ChartComponentOptions = {
   type: ChartType;
@@ -23,6 +29,7 @@ export type ChartComponentOptions = {
   defaultData?: string;
   blockLabel?: string;
   chartjsOptions?: ChartOptions;
+  optionalDatasetProperties?: ChartOptionalDatasetProperties[];
   backgroundColor?: TraitProperties;
   borderColor?: TraitProperties;
   borderWidth?: TraitProperties;
@@ -35,6 +42,10 @@ export const CHARTS: ChartComponentOptions[] = [
     backgroundColor: { label: "Add Point Color" },
     borderColor: { label: "Add Line Color" },
     borderWidth: { label: "Line Width", placeholder: "1", value: 1 },
+    optionalDatasetProperties: [
+      { property: "fill", type: "checkbox" },
+      { property: "tension", type: "number", min: 0, placeholder: "0.1", step: .1 },
+    ],
   },
   {
     type: "pie",

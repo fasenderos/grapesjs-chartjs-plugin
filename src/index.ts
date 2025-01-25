@@ -15,7 +15,6 @@ const plugin: Plugin<ChartjsPluginOptions> = (editor, opts = {}) => {
       ...{
         // default options
         chartjsOptions: {
-          responsive: true,
           maintainAspectRatio: false,
         },
       },

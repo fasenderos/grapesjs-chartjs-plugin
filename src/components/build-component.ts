@@ -21,6 +21,7 @@ import {
   DATASET_BORDER_WIDTH,
   DATASET_DATA,
   DATASET_LABEL,
+  DATASET_OPTIONAL_PROPERTY,
   REMOVE_DATASET,
 } from "../constants";
 import { addColorTrait } from "../traits/addColorButton";
@@ -134,6 +135,21 @@ export default (
       min: options?.borderWidth?.min ?? 0,
       category,
     });
+    if (options?.optionalDatasetProperties?.length) {
+      for (const {
+        property,
+        ...traitProps
+      } of options.optionalDatasetProperties) {
+        newTraitsGroup.push({
+          ...traitProps,
+          label:
+            traitProps.label ??
+            `${property.charAt(0).toUpperCase() + property.slice(1)}`,
+          name: `${DATASET_OPTIONAL_PROPERTY}-${property}-${id}`,
+          category,
+        });
+      }
+    }
     return { group: newTraitsGroup, id };
   };
   return (): AddComponentTypeOptions => {
@@ -141,6 +157,9 @@ export default (
     return {
       model: {
         defaults: {
+          attributes: {
+            "data-gjs-type": `chartjs-${type}`,
+          },
           unstylable: ["width", "height"],
           traits: [
             {
@@ -338,6 +357,13 @@ export default (
                   );
                 } else if (traitName?.includes(DATASET_BORDER_COLOR)) {
                   this.updateChartDatasetBorderColor(value, index, colorIndex);
+                } else if (traitName?.includes(DATASET_OPTIONAL_PROPERTY)) {
+                  this.updateOptionalDatasetProperty(
+                    trait,
+                    traitName,
+                    value,
+                    index,
+                  );
                 }
                 break;
               }
@@ -487,6 +513,26 @@ export default (
             ...(this.chart.options.plugins ?? {}),
             subtitle: { display: value.length > 0, text: value },
           };
+        },
+        updateOptionalDatasetProperty(
+          trait: Trait,
+          traitName: string,
+          value: unknown,
+          index: number,
+        ) {
+          const property = traitName.split("-").pop();
+          if (property) {
+            if (!this.chart.data.datasets[index]) {
+              this.chart.data.datasets[index] = {};
+            }
+            let newValue = value;
+            // checkbox can comes as a target attributes with an empty string that means "true", true or false
+            if (trait.attributes.type === "checkbox" && value !== false) {
+              const attributes = trait.target.getAttributes();
+              if (attributes?.[trait.id] === "") newValue = true;
+            }
+            this.chart.data.datasets[index][property] = newValue;
+          }
         },
         addCanvas(): void {
           // Remove any childs from the div
