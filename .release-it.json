@@ -1,6 +1,6 @@
 {
   "git": {
-    "commitMessage": "chore(release): nodejs-order-book@${version}",
+    "commitMessage": "chore(release): grapesjs-chartjs-plugin@${version}",
     "tagName": "v${version}",
     "tagAnnotation": "Release v${version}",
     "requireCommits": true,
