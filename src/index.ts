@@ -1,5 +1,5 @@
-import type { Plugin } from "grapesjs";
 import type { ChartOptions } from "chart.js";
+import type { Plugin } from "grapesjs";
 import { loadChartJs } from "./charjsLoader";
 import loadBlocks from "./loadBlocks";
 import loadComponents from "./loadComponents";

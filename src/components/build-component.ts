@@ -1,11 +1,11 @@
+import type { Chart } from "chart.js";
 import type {
-  Editor,
   AddComponentTypeOptions,
+  Component,
+  Editor,
   Trait,
   TraitProperties,
-  Component,
 } from "grapesjs";
-import type { Chart } from "chart.js";
 import {
   ADD_BACKGROUND,
   ADD_BORDER,
@@ -15,13 +15,13 @@ import {
   CHART_SUBTITLE,
   CHART_TITLE,
   CHART_WIDTH,
+  type ChartComponentOptions,
   DATASET_BACKGROUND_COLOR,
   DATASET_BORDER_COLOR,
   DATASET_BORDER_WIDTH,
   DATASET_DATA,
   DATASET_LABEL,
   REMOVE_DATASET,
-  type ChartComponentOptions,
 } from "../constants";
 import { addColorTrait } from "../traits/addColorButton";
 
@@ -50,19 +50,22 @@ const DEFAULT_OPTIONS = {
 
 export default (
   editor: Editor,
-  { type, ...options }: ChartComponentOptions
+  { type, ...options }: ChartComponentOptions,
 ) => {
   const getNewTraitsGroup = (
-    selectedComponent?: Component
+    selectedComponent?: Component,
   ): { group: TraitProperties[]; id: number } => {
     const component = selectedComponent ?? editor.getSelected();
     let last = 0;
-    component?.getTraits().forEach((trait) => {
+    for (const trait of component?.getTraits() ?? []) {
       if (trait.category?.id && trait.category.id !== "cjs-common") {
-        const id = parseInt((trait.category.id as string).split("-").pop()!);
-        if (id > last) last = id;
+        const categoryId = (trait.category.id as string).split("-").pop();
+        if (categoryId) {
+          const id = Number.parseInt(categoryId);
+          if (id > last) last = id;
+        }
       }
-    });
+    }
     const id = last + 1;
     const newTraitsGroup: TraitProperties[] = [];
     const category = {
@@ -82,21 +85,21 @@ export default (
           if (component) {
             const traits = component
               .getTraits()
-              .filter((t) => t.category!.id === category.id);
-            traits.forEach((t) => {
-              t.off("change:value");
-              t.setValue("");
-              component.removeTrait(t.id as string);
-            });
+              .filter((t) => t.category?.id === category.id);
+            for (const trait of traits) {
+              trait.off("change:value");
+              trait.setValue("");
+              component.removeTrait(trait.id as string);
+            }
             // @ts-ignore
-            component.view!.removeDataset(id - 1);
+            component.view?.removeDataset(id - 1);
           }
         },
       });
     }
     newTraitsGroup.push({
       type: "text",
-      label: `Name`,
+      label: "Name",
       name: `${DATASET_LABEL}-${id}`,
       category,
       value: `#${id} ${DEFAULT_OPTIONS.label}`,
@@ -104,7 +107,7 @@ export default (
     });
     newTraitsGroup.push({
       type: "text",
-      label: `Values`,
+      label: "Values",
       name: `${DATASET_DATA}-${id}`,
       category,
       value: options.defaultData ?? DEFAULT_OPTIONS.data,
@@ -133,7 +136,7 @@ export default (
     });
     return { group: newTraitsGroup, id };
   };
-  return function (): AddComponentTypeOptions {
+  return (): AddComponentTypeOptions => {
     const chartSettingCategory = { id: "cjs-common", label: "Chart Settings" };
     return {
       model: {
@@ -200,34 +203,37 @@ export default (
           if (this.chart) {
             this.chart.destroy();
           }
-          model.getTraits().forEach((trait) => {
+          for (const trait of model.getTraits()) {
             this.listenTo(trait, "change:value", () => this.updateChart(trait));
-          });
+          }
           this.addNewTraitGroup(model);
         },
         onRender({ model }) {
           const attributes = model.getAttributes();
           let dataSetCount = 1;
-          Object.keys(attributes).forEach((key) => {
+          for (const key of Object.keys(attributes)) {
             const parent = key.includes(DATASET_BACKGROUND_COLOR)
               ? ADD_BACKGROUND
               : key.includes(DATASET_BORDER_COLOR)
-              ? ADD_BORDER
-              : null;
+                ? ADD_BORDER
+                : null;
             if (parent) {
-              const id = parseInt(key.split("-").pop()!);
-              if (id > dataSetCount) {
-                this.addNewTraitGroup(model);
-                dataSetCount++;
-              }
-              const trait = model
-                .getTraits()
-                .find((t) => t.id === `${parent}-${id}`);
-              if (trait) {
-                addColorTrait(model, trait);
+              const fieldId = key.split("-").pop();
+              if (fieldId) {
+                const id = Number.parseInt(fieldId);
+                if (id > dataSetCount) {
+                  this.addNewTraitGroup(model);
+                  dataSetCount++;
+                }
+                const trait = model
+                  .getTraits()
+                  .find((t) => t.id === `${parent}-${id}`);
+                if (trait) {
+                  addColorTrait(model, trait);
+                }
               }
             }
-          });
+          }
           setTimeout(() => {
             this.initChart();
           }, 0);
@@ -247,9 +253,9 @@ export default (
           });
           this.addDataset();
           const traits = this.model.getTraits();
-          traits.forEach((trait) => {
+          for (const trait of traits) {
             this.updateChart(trait, false);
-          });
+          }
           this.chart.update();
         },
         addNewTraitGroup(component: Component) {
@@ -272,59 +278,69 @@ export default (
           if (this.chart) {
             const value = trait.get("value");
             const splitTrait = trait.get("name")?.split("-") as string[];
-            const fieldNumber = parseInt(
-              splitTrait?.[splitTrait.length - 1] ?? "1"
+            const fieldNumber = Number.parseInt(
+              splitTrait?.[splitTrait.length - 1] ?? "1",
             );
             const traitName = [...splitTrait]
               ?.splice(
                 0,
                 Number.isNaN(fieldNumber)
                   ? splitTrait.length
-                  : splitTrait.length - 1
+                  : splitTrait.length - 1,
               )
               .join("-");
             const index = fieldNumber - 1;
             switch (traitName) {
-              case DATASET_DATA:
+              case DATASET_DATA: {
                 this.updateChartDatasetData(value, index);
                 break;
-              case DATASET_LABEL:
+              }
+              case DATASET_LABEL: {
                 this.updateChartDatasetLabel(value, index);
                 break;
-              case CHART_LABELS:
+              }
+              case CHART_LABELS: {
                 this.updateChartLabels(value);
                 break;
+              }
               case CHART_TITLE:
                 this.updateChartTitle(value);
                 break;
-              case CHART_SUBTITLE:
+              case CHART_SUBTITLE: {
                 this.updateChartSubtitle(value);
                 break;
-              case CHART_HEIGHT:
+              }
+              case CHART_HEIGHT: {
                 trait.component.addStyle({ height: `${value}px` });
                 break;
-              case CHART_WIDTH:
+              }
+              case CHART_WIDTH: {
                 trait.component.addStyle({ width: `${value}px` });
                 break;
-              case DATASET_BORDER_WIDTH:
+              }
+              case DATASET_BORDER_WIDTH: {
                 const payload: UpdateChartDatasetBorderWidthProps = {
-                  borderWidth: parseInt(value),
+                  borderWidth: Number.parseInt(value),
                   index,
                 };
                 this.updateChartDatasetBorderWidth(payload);
                 break;
-              default:
-                const colorIndex = parseInt(splitTrait[splitTrait.length - 2]);
+              }
+              default: {
+                const colorIndex = Number.parseInt(
+                  splitTrait[splitTrait.length - 2],
+                );
                 if (traitName?.includes(DATASET_BACKGROUND_COLOR)) {
                   this.updateChartDatasetBackgroundColor(
                     value,
                     index,
-                    colorIndex
+                    colorIndex,
                   );
                 } else if (traitName?.includes(DATASET_BORDER_COLOR)) {
                   this.updateChartDatasetBorderColor(value, index, colorIndex);
                 }
                 break;
+              }
             }
             if (forceUpdate) this.chart.update();
           } else this.initChart();
@@ -373,7 +389,7 @@ export default (
         updateChartDatasetBackgroundColor(
           value: string,
           index: number,
-          colorIndex: number
+          colorIndex: number,
         ): void {
           const payload: UpdateChartDatasetColorProps = {
             action: "update",
@@ -386,7 +402,7 @@ export default (
         updateChartDatasetBorderColor(
           value: string,
           index: number,
-          colorIndex: number
+          colorIndex: number,
         ): void {
           const payload: UpdateChartDatasetColorProps = {
             action: "update",
@@ -424,7 +440,7 @@ export default (
               if (backgroundColor === "") {
                 this.chart.data.datasets[index].backgroundColor.splice(
                   colorIndex,
-                  1
+                  1,
                 );
                 if (
                   this.chart.data.datasets[index].backgroundColor.length === 0
@@ -443,7 +459,7 @@ export default (
               if (borderColor === "") {
                 this.chart.data.datasets[index].borderColor.splice(
                   colorIndex,
-                  1
+                  1,
                 );
                 if (this.chart.data.datasets[index].borderColor.length === 0) {
                   this.chart.data.datasets[index].borderColor = [

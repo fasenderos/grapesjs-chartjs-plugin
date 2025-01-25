@@ -1,9 +1,9 @@
 import type { BlockProperties } from "grapesjs";
-import { ChartComponentOptions } from "../constants";
+import type { ChartComponentOptions } from "../constants";
 
 export default (
   icon: string,
-  { type, ...options }: ChartComponentOptions
+  { type, ...options }: ChartComponentOptions,
 ): BlockProperties => {
   const label =
     options.blockLabel ??

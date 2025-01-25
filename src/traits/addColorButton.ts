@@ -52,69 +52,73 @@ const getColorTraitName = (isBg: boolean, counter: number, id: string) => {
 
 export const addColorTrait = (component: Component, trait: Trait) => {
   const id = (trait.id as string).split("-").pop();
-  const isBg = (trait.id as string).includes(ADD_BACKGROUND);
-  const traits = component.getTraits();
-  const { counter, lastIndex } = getFieldsCount(traits, isBg, trait.category!);
-  const last =
-    lastIndex > 0 ? lastIndex : traits.findIndex((t) => trait.id === t.id);
-  const at = last + 1;
-  const name = getColorTraitName(isBg, counter, id!);
+  if (id && trait.category) {
+    const isBg = (trait.id as string).includes(ADD_BACKGROUND);
+    const traits = component.getTraits();
+    const { counter, lastIndex } = getFieldsCount(traits, isBg, trait.category);
+    const last =
+      lastIndex > 0 ? lastIndex : traits.findIndex((t) => trait.id === t.id);
+    const at = last + 1;
+    const name = getColorTraitName(isBg, counter, id);
 
-  if (counter === 0) {
-    const removeButton = getRemoveButton(trait);
-    if (removeButton) removeButton.classList.remove("cjs-button-disabled");
-  }
-  const addedTrait = component?.addTrait(
-    [
-      {
-        type: "color",
-        label: false,
-        name,
-        category: (trait.category as Category).attributes as string,
-      },
-    ],
-    { at }
-  )[0];
-  const handleChangeColor = (
-    trait: Trait,
-    value: string | number,
-    opts: { fromInput?: 1; avoidStore?: 1; fromTarget?: 1 }
-  ) => {
-    if (
-      (opts.fromInput === 1 ||
-        opts.avoidStore === undefined ||
-        opts.fromTarget === 1) &&
-      value !== 0
-    ) {
-      // @ts-ignore
-      component.view!.updateChart(trait);
+    if (counter === 0) {
+      const removeButton = getRemoveButton(trait);
+      if (removeButton) removeButton.classList.remove("cjs-button-disabled");
     }
-  };
-  addedTrait.on("change:value", handleChangeColor);
+    const addedTrait = component?.addTrait(
+      [
+        {
+          type: "color",
+          label: false,
+          name,
+          category: (trait.category as Category).attributes as string,
+        },
+      ],
+      { at },
+    )[0];
+    const handleChangeColor = (
+      trait: Trait,
+      value: string | number,
+      opts: { fromInput?: 1; avoidStore?: 1; fromTarget?: 1 },
+    ) => {
+      if (
+        (opts.fromInput === 1 ||
+          opts.avoidStore === undefined ||
+          opts.fromTarget === 1) &&
+        value !== 0
+      ) {
+        // @ts-ignore
+        component.view?.updateChart(trait);
+      }
+    };
+    addedTrait.on("change:value", handleChangeColor);
+  }
 };
 
 const removeColorTrait = (component: Component, trait: Trait) => {
   const id = (trait.id as string).split("-").pop();
   const isBg = (trait.id as string).includes(ADD_BACKGROUND);
   const traits = component.getTraits();
-  const { counter } = getFieldsCount(traits, isBg, trait.category!);
-  if (counter === 1) {
-    const removeButton = getRemoveButton(trait);
-    if (removeButton) removeButton.classList.add("cjs-button-disabled");
-  }
-  if (counter > 0) {
-    const traitId = getColorTraitName(isBg, counter - 1, id!);
-    const traitToBeRemoved = component.getTrait(traitId);
-    traitToBeRemoved.setValue("");
-    traitToBeRemoved.off("change:value");
-    component.removeTrait(traitId);
+  if (trait.category) {
+    const { counter } = getFieldsCount(traits, isBg, trait.category);
+    if (counter === 1) {
+      const removeButton = getRemoveButton(trait);
+      if (removeButton) removeButton.classList.add("cjs-button-disabled");
+    }
+    if (counter > 0 && id) {
+      const traitId = getColorTraitName(isBg, counter - 1, id);
+      const traitToBeRemoved = component.getTrait(traitId);
+      traitToBeRemoved.setValue("");
+      traitToBeRemoved.off("change:value");
+      component.removeTrait(traitId);
+    }
   }
 };
 
 const getFieldsCount = (
   traits: Trait[],
   isBg: boolean,
-  traitCategory: Category
+  traitCategory: Category,
 ) => {
   const traitsLength = traits.length;
   let lastIndex = 0;
@@ -124,7 +128,7 @@ const getFieldsCount = (
   for (let index = 0; index < traitsLength; index++) {
     if (
       traits[index].attributes.type === "color" &&
-      traitCategory.id === traits[index].category!.id
+      traitCategory.id === traits[index].category?.id
     ) {
       const trait = traits[index];
       if (isBg) {

@@ -1,21 +1,21 @@
-import type { ChartType, ChartOptions } from "chart.js";
+import type { ChartOptions, ChartType } from "chart.js";
 import type { TraitProperties } from "grapesjs";
 
-export const ADD_DATASET = "cjs-add-dataset"
-export const REMOVE_DATASET = "cjs-remove-dataset"
+export const ADD_DATASET = "cjs-add-dataset";
+export const REMOVE_DATASET = "cjs-remove-dataset";
 export const ADD_BACKGROUND = "cjs-add-background-color";
 export const ADD_BORDER = "cjs-add-border-color";
 
-export const CHART_LABELS = "cjs-chart-labels"
-export const CHART_TITLE = "cjs-chart-title"
-export const CHART_SUBTITLE = "cjs-chart-subtitle"
+export const CHART_LABELS = "cjs-chart-labels";
+export const CHART_TITLE = "cjs-chart-title";
+export const CHART_SUBTITLE = "cjs-chart-subtitle";
 export const CHART_WIDTH = "cjs-chart-width";
 export const CHART_HEIGHT = "cjs-chart-height";
 export const DATASET_LABEL = "cjs-dataset-label";
 export const DATASET_DATA = "cjs-dataset-data";
 export const DATASET_BACKGROUND_COLOR = "cjs-dataset-background-color";
 export const DATASET_BORDER_COLOR = "cjs-dataset-border-color";
-export const DATASET_BORDER_WIDTH = "cjs-dataset-border-width"
+export const DATASET_BORDER_WIDTH = "cjs-dataset-border-width";
 
 export type ChartComponentOptions = {
   type: ChartType;
