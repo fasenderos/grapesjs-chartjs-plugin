@@ -1,5 +1,7 @@
 # Grapesjs Chartjs Plugin
 
+### [Chart.js](https://www.chartjs.org/) plugin for Grapesjs
+
 [DEMO](##)
 > **Provide a live demo of your plugin**
 For a better user engagement create a simple live demo by using services like [JSFiddle](https://jsfiddle.net) [CodeSandbox](https://codesandbox.io) [CodePen](https://codepen.io) and link it here in your README (attaching a screenshot/gif will also be a plus).
@@ -17,7 +19,7 @@ To help you in this process here below you will find the necessary HTML/CSS/JS, 
 ### JS
 ```js
 const editor = grapesjs.init({
-	container: '#gjs',
+  container: '#gjs',
   height: '100%',
   fromElement: true,
   storageManager: false,
@@ -25,34 +27,34 @@ const editor = grapesjs.init({
 });
 ```
 
-### CSS
-```css
-body, html {
-  margin: 0;
-  height: 100%;
-}
-```
-
 
 ## Summary
 
 * Plugin name: `grapesjs-chartjs-plugin`
 * Components
-    * `component-id-1`
-    * `component-id-2`
-    * ...
+    * `chartjs-bar`
+    * `chartjs-line`
+    * `chartjs-pie`
+    * `chartjs-doughnut`
+    * `chartjs-polarArea`
+    * `chartjs-radar`
+    * `chartjs-bubble`
+    * `chartjs-scatter`
 * Blocks
-    * `block-id-1`
-    * `block-id-2`
-    * ...
-
-
+    * `chartjs-bar`
+    * `chartjs-line`
+    * `chartjs-pie`
+    * `chartjs-doughnut`
+    * `chartjs-polarArea`
+    * `chartjs-radar`
+    * `chartjs-bubble`
+    * `chartjs-scatter`
 
 ## Options
 
 | Option | Description | Default |
 |-|-|-
-| `option1` | Description option | `default value` |
+| `chartjsOptions` | This object will be passed directly to the underlying Chart.js `options`. [See here for more info](https://www.chartjs.org/docs/latest/configuration/). | `{ maintainAspectRatio: false }` |
 
 
 

@@ -3,9 +3,14 @@
   "version": "0.0.0",
   "description": "Grapesjs Chartjs Plugin",
   "main": "dist/index.js",
+  "author": "Andrea Fassina <fasenderos@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fasenderos/grapesjs-chartjs-plugin.git"
+    "url": "git@github.com:fasenderos/grapesjs-chartjs-plugin.git"
+  },
+  "homepage": "https://github.com/fasenderos/grapesjs-chartjs-plugin",
+  "bugs": {
+    "url": "https://github.com/fasenderos/grapesjs-chartjs-plugin/issues"
   },
   "scripts": {
     "build": "grapesjs-cli build --patch=false",
@@ -20,7 +25,10 @@
   },
   "keywords": [
     "grapesjs",
-    "plugin"
+    "plugin",
+    "chartjs",
+    "chart.js",
+    "charts"
   ],
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
