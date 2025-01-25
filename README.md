@@ -12,6 +12,7 @@ To help you in this process here below you will find the necessary HTML/CSS/JS, 
 ### HTML
 ```html
 <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet">
+<script src="https://unpkg.com/chart.js"></script>
 <script src="https://unpkg.com/grapesjs"></script>
 <script src="https://unpkg.com/grapesjs-chartjs-plugin"></script>
 
