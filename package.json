@@ -8,7 +8,7 @@
     "url": "https://github.com/fasenderos/grapesjs-chartjs-plugin.git"
   },
   "scripts": {
-    "build": "grapesjs-cli build",
+    "build": "grapesjs-cli build --patch=false",
     "lint": "biome check ./src",
     "lint:fix": "biome check --write ./src",
     "release": "release-it --ci",
