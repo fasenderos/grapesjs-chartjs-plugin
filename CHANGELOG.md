@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.0.4](https://github.com/fasenderos/grapesjs-chartjs-plugin/compare/v0.0.3...v0.0.4) (2025-01-26)
+
 ## [0.0.3](https://github.com/fasenderos/grapesjs-chartjs-plugin/compare/v0.0.2...v0.0.3) (2025-01-25)
 
 ### Bug Fixes
