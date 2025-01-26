@@ -16,11 +16,7 @@
     "build": "rm -rf ./dist && grapesjs-cli build --patch=false",
     "lint": "biome check ./src",
     "lint:fix": "biome check --write ./src",
-    "release": "release-it --ci",
-    "release:beta": "release-it --ci --preRelease=beta",
-    "release:major": "release-it major --ci",
-    "release:minor": "release-it minor --ci",
-    "release:patch": "release-it patch --ci",
+    "release": "node --env-file=.env ./node_modules/release-it/bin/release-it.js --ci",
     "start": "grapesjs-cli serve"
   },
   "keywords": [
