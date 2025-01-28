@@ -7,6 +7,11 @@ import loadTraits from "./loadTraits";
 import style from "./style";
 
 export type ChartjsPluginOptions = {
+  /**
+   * I18n object containing languages, [more info](https://grapesjs.com/docs/modules/I18n.html#configuration).
+   * @default {}
+   */
+  i18n?: Record<string, unknown>;
   chartjsOptions?: ChartOptions;
 };
 
@@ -16,7 +21,7 @@ const plugin: Plugin<ChartjsPluginOptions> = (editor, opts = {}) => {
   return loadChartJs(() => {
     const options: Required<ChartjsPluginOptions> = {
       ...{
-        // default options
+        i18n: {},
         chartjsOptions: {
           maintainAspectRatio: false,
         },
