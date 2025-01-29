@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.0](https://github.com/fasenderos/grapesjs-chartjs-plugin/compare/v0.0.5...v0.1.0) (2025-01-29)
+
+### Features
+
+* add i18n support ([dbc71be](https://github.com/fasenderos/grapesjs-chartjs-plugin/commit/dbc71bed253e68c048236316ca5a9b9a6460e4c0))
+
 ## [0.0.5](https://github.com/fasenderos/grapesjs-chartjs-plugin/compare/v0.0.4...v0.0.5) (2025-01-29)
 
 ### Bug Fixes
