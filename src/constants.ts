@@ -6,6 +6,7 @@ export const REMOVE_DATASET = "cjs-remove-dataset";
 export const ADD_BACKGROUND = "cjs-add-background-color";
 export const ADD_BORDER = "cjs-add-border-color";
 
+export const CHART_TYPE = "cjs-chart-type";
 export const CHART_LABELS = "cjs-chart-labels";
 export const CHART_TITLE = "cjs-chart-title";
 export const CHART_SUBTITLE = "cjs-chart-subtitle";
@@ -24,9 +25,11 @@ type ChartOptionalDatasetProperties = {
   traitOptions?: Omit<TraitProperties, "type">;
 };
 
+export type DatasetType = "labels-data" | "x-y" | "x-y-r"; // default to "labels-data"
+
 export type ChartComponentOptions = {
   type: ChartType;
-  datasetType?: "labels-data" | "x-y" | "x-y-r"; // default to "labels-data"
+  datasetType?: DatasetType;
   defaultLabels?: string;
   defaultData?: string;
   blockLabel?: string;
