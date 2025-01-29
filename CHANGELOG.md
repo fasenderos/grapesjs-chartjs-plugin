@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.5](https://github.com/fasenderos/grapesjs-chartjs-plugin/compare/v0.0.4...v0.0.5) (2025-01-29)
+
+### Bug Fixes
+
+* load chart.js in canvas ([e482eaa](https://github.com/fasenderos/grapesjs-chartjs-plugin/commit/e482eaa420aeea292350970ff1bc80be014c6b95))
+
 ## [0.0.4](https://github.com/fasenderos/grapesjs-chartjs-plugin/compare/v0.0.3...v0.0.4) (2025-01-26)
 
 ## [0.0.3](https://github.com/fasenderos/grapesjs-chartjs-plugin/compare/v0.0.2...v0.0.3) (2025-01-25)
