@@ -13,7 +13,7 @@
     "url": "https://github.com/fasenderos/grapesjs-chartjs-plugin/issues"
   },
   "scripts": {
-    "build": "rm -rf ./dist && grapesjs-cli build --patch=false",
+    "build": "rm -rf ./dist && rm -rf ./locale && grapesjs-cli build --patch=false",
     "lint": "biome check ./src",
     "lint:fix": "biome check --write ./src",
     "release": "node --env-file=.env ./node_modules/release-it/bin/release-it.js --ci",
