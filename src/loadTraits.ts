@@ -87,7 +87,7 @@ const addColorTrait = (component: Component, trait: Trait) => {
         value !== 0
       ) {
         // @ts-ignore
-        component.view?.updateChart(trait);
+        component.view?.updateChart();
       }
     };
     addedTrait.on("change:value", handleChangeColor);

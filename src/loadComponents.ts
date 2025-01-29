@@ -68,12 +68,10 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
           bc: false,
           cl: false,
           cr: false,
-          onEnd: (_ev: Event, opts: CallbackOptions) => {
+          onEnd: (_ev: Event, { el }: CallbackOptions) => {
             const component = editor.getSelected();
-            const width = component?.getTrait(CHART_WIDTH);
-            const height = component?.getTrait(CHART_HEIGHT);
-            width?.setValue(opts.el.offsetWidth);
-            height?.setValue(opts.el.offsetHeight);
+            component?.addAttributes({ CHART_WIDTH: el.offsetWidth });
+            component?.addAttributes({ CHART_HEIGHT: el.offsetHeight });
           },
         },
         unstylable: ["width", "height"],
@@ -145,102 +143,59 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
           return traits;
         },
       },
-    },
-    view: {
-      init({ model }) {
-        if (this.chart) {
-          this.chart.destroy();
-        }
-        const alreadyLoaded = model.getTrait(`${DATASET_DATA}-1`);
+      init() {
+        const alreadyLoaded = this.getTrait(`${DATASET_DATA}-1`);
         if (alreadyLoaded == null) {
-          this.addNewTraitGroup(model, false);
-        }
-
-        const traits = model.getTraits();
-        for (const trait of traits) {
-          this.listenTo(trait, "change:value", () => this.updateChart(trait));
-        }
-      },
-      onRender({ model }) {
-        const attributes = model.getAttributes();
-        let dataSetCount = 1;
-        for (const key of Object.keys(attributes)) {
-          const fieldId = key.split("-").pop();
-          if (fieldId) {
-            const id = Number.parseInt(fieldId);
-            if (id > dataSetCount) {
-              this.addNewTraitGroup(model);
-              dataSetCount++;
-            }
-            const parent = key.includes(DATASET_BACKGROUND_COLOR)
-              ? ADD_BACKGROUND
-              : key.includes(DATASET_BORDER_COLOR)
-                ? ADD_BORDER
-                : null;
-            if (parent) {
-              const trait = model
-                .getTraits()
-                .find((t) => t.id === `${parent}-${id}`);
-              if (trait) {
-                addColorTrait(model, trait);
+          this.addNewTraitGroup();
+        } else {
+          const attributes = this.getAttributes();
+          let dataSetCount = 0;
+          for (const key of Object.keys(attributes)) {
+            const fieldId = key.split("-").pop();
+            if (fieldId) {
+              const id = Number.parseInt(fieldId);
+              if (id > dataSetCount) {
+                this.addNewTraitGroup();
+                dataSetCount++;
+              }
+              const parent = key.includes(DATASET_BACKGROUND_COLOR)
+                ? ADD_BACKGROUND
+                : key.includes(DATASET_BORDER_COLOR)
+                  ? ADD_BORDER
+                  : null;
+              if (parent) {
+                const trait = this.getTraits().find(
+                  (t) => t.id === `${parent}-${id}`,
+                );
+                if (trait) {
+                  addColorTrait(this, trait);
+                }
               }
             }
           }
         }
-        setTimeout(() => {
-          this.initChart();
-        }, 0);
+        this.on("change:attributes", this.handleAttrChange);
       },
-      initChart() {
-        this.addCanvas();
-        const ctx = this.el.firstChild;
+      handleAttrChange(component: Component) {
         // @ts-ignore
-        this.chart = new Chart(ctx, {
-          data: {
-            labels: [],
-            datasets: [],
-          },
-          options: {
-            ...(options.chartjsOptions ?? {}),
-          },
-        });
-        this.addDataset();
-        const traits = this.model.getTraits();
-        for (const trait of traits) {
-          this.updateChart(trait, false);
-        }
-        this.chart.update();
+        component.view.updateChart();
       },
-      addNewTraitGroup(component: Component, listener = true) {
-        const newTraitsGroup = this.getNewTraitsGroup(component);
-        const newTraits = component.addTrait(newTraitsGroup.group);
-        const handleChangeValue = (trait: Trait) => {
-          this.updateChart(trait);
-        };
-        newTraits?.forEach((trait, index) => {
-          if (listener) trait.on("change:value", handleChangeValue);
-          this.updateChart(trait);
-          // if (
-          //   newTraitsGroup.group[index]?.value != null &&
-          //   !trait.getValue()
-          // ) {
-          //   console.log("set new value")
-          //   trait.setValue(newTraitsGroup.group[index].value);
-          // }
-        });
+      addNewTraitGroup() {
+        const newTraitsGroup = this.getNewTraitsGroup();
+        this.addTrait(newTraitsGroup.group);
       },
-      getNewTraitsGroup(component: Component): {
+      getNewTraitsGroup(): {
         group: TraitProperties[];
         id: number;
       } {
-        const options = component.get(
+        const options = this.get(
           "chartComponentOptions",
         ) as ChartComponentOptions;
-        const attributes = component?.getAttributes() ?? {};
+        const attributes = this.getAttributes() ?? {};
         const datasetType = options.datasetType ?? "labels-data";
 
         let last = 0;
-        for (const trait of component?.getTraits() ?? []) {
+        for (const trait of this.getTraits() ?? []) {
           if (trait.category?.id && trait.category.id !== "cjs-common") {
             const categoryId = (trait.category.id as string).split("-").pop();
             if (categoryId) {
@@ -359,8 +314,22 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
           }
         }
         if (Object.keys(newTraitsGroup).length)
-          component?.addAttributes(newAttributes);
+          this.addAttributes(newAttributes);
         return { group: newTraitsGroup, id };
+      },
+    },
+    view: {
+      init() {
+        this.chart = {
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            ...(options.chartjsOptions ?? {}),
+          },
+        };
+        this.updateChart();
       },
       getDatasetType() {
         const options = this.model.get(
@@ -368,89 +337,110 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         ) as ChartComponentOptions;
         return options?.datasetType ?? "labels-data";
       },
-      updateChart(trait: Trait, forceUpdate = true) {
-        if (this.chart) {
-          const datasetType = this.getDatasetType() as DatasetType;
-          const value = trait.get("value");
-          const splitTrait = trait.get("name")?.split("-") as string[];
-          const fieldNumber = Number.parseInt(
-            splitTrait?.[splitTrait.length - 1] ?? "1",
-          );
-          const traitName = [...splitTrait]
-            ?.splice(
-              0,
-              Number.isNaN(fieldNumber)
-                ? splitTrait.length
-                : splitTrait.length - 1,
-            )
-            .join("-");
-          const index = fieldNumber - 1;
-          switch (traitName) {
-            case DATASET_DATA: {
-              this.updateChartDatasetData(value, index);
-              break;
-            }
-            case DATASET_LABEL: {
-              this.updateChartDatasetLabel(value, index);
-              break;
-            }
-            case CHART_LABELS: {
-              this.updateChartLabels(value, index);
-              break;
-            }
-            case CHART_TITLE:
-              this.updateChartTitle(value);
-              break;
-            case CHART_SUBTITLE: {
-              this.updateChartSubtitle(value);
-              break;
-            }
-            case CHART_HEIGHT: {
-              trait.component.addStyle({ height: `${value}px` });
-              break;
-            }
-            case CHART_WIDTH: {
-              trait.component.addStyle({ width: `${value}px` });
-              break;
-            }
-            case DATASET_BORDER_WIDTH: {
-              const payload: UpdateChartDatasetBorderWidthProps = {
-                borderWidth: Number.parseInt(value),
-                index,
-              };
-              this.updateChartDatasetBorderWidth(payload);
-              break;
-            }
-            default: {
-              const colorIndex = Number.parseInt(
-                splitTrait[splitTrait.length - 2],
-              );
-              if (traitName?.includes(DATASET_BACKGROUND_COLOR)) {
-                this.updateChartDatasetBackgroundColor(
-                  value,
+      updateChart() {
+        const {
+          id,
+          [CHART_TYPE]: type,
+          "data-gjs-type": componentName,
+          ...restTraits
+        } = this.model.getTraits().reduce(
+          (acc, curr) => {
+            acc[curr.getName()] = curr;
+            return acc;
+          },
+          {} as { [name: string]: Trait },
+        );
+
+        const datasetType = this.getDatasetType() as DatasetType;
+        for (const name in restTraits) {
+          if (Object.prototype.hasOwnProperty.call(restTraits, name)) {
+            const trait = restTraits[name];
+            console.log("attribute", name, trait.getValue());
+
+            const value = trait.getValue();
+            const splitTrait = name.split("-") as string[];
+            const fieldNumber = Number.parseInt(
+              splitTrait?.[splitTrait.length - 1] ?? "1",
+            );
+            const traitName = [...splitTrait]
+              ?.splice(
+                0,
+                Number.isNaN(fieldNumber)
+                  ? splitTrait.length
+                  : splitTrait.length - 1,
+              )
+              .join("-");
+            const index = fieldNumber - 1;
+            switch (traitName) {
+              case DATASET_DATA: {
+                this.updateChartDatasetData(value, index);
+                break;
+              }
+              case DATASET_LABEL: {
+                this.updateChartDatasetLabel(value, index);
+                break;
+              }
+              case CHART_LABELS: {
+                this.updateChartLabels(value, index);
+                break;
+              }
+              case CHART_TITLE:
+                this.updateChartTitle(value);
+                break;
+              case CHART_SUBTITLE: {
+                this.updateChartSubtitle(value);
+                break;
+              }
+              case CHART_HEIGHT: {
+                this.model.addStyle({ height: `${value ?? 0}px` });
+                break;
+              }
+              case CHART_WIDTH: {
+                this.model.addStyle({ width: `${value ?? 0}px` });
+                break;
+              }
+              case DATASET_BORDER_WIDTH: {
+                const payload: UpdateChartDatasetBorderWidthProps = {
+                  borderWidth: Number.parseInt(value),
                   index,
-                  colorIndex,
+                };
+                this.updateChartDatasetBorderWidth(payload);
+                break;
+              }
+              default: {
+                const colorIndex = Number.parseInt(
+                  splitTrait[splitTrait.length - 2],
                 );
-              } else if (traitName?.includes(DATASET_BORDER_COLOR)) {
-                this.updateChartDatasetBorderColor(value, index, colorIndex);
-              } else if (traitName?.includes(DATASET_OPTIONAL_PROPERTY)) {
-                if (datasetType === "labels-data") {
-                  this.updateOptionalDatasetProperty(
-                    trait,
-                    traitName,
+                if (traitName?.includes(DATASET_BACKGROUND_COLOR)) {
+                  this.updateChartDatasetBackgroundColor(
                     value,
                     index,
+                    colorIndex,
                   );
-                } else {
-                  const type = traitName.split("-").pop();
-                  this.updateChartByDatasetType(type, value, index);
+                } else if (traitName?.includes(DATASET_BORDER_COLOR)) {
+                  this.updateChartDatasetBorderColor(value, index, colorIndex);
+                } else if (traitName?.includes(DATASET_OPTIONAL_PROPERTY)) {
+                  if (datasetType === "labels-data") {
+                    this.updateOptionalDatasetProperty(
+                      trait,
+                      traitName,
+                      value,
+                      index,
+                    );
+                  } else {
+                    const type = traitName.split("-").pop();
+                    this.updateChartByDatasetType(type, value, index);
+                  }
                 }
+                break;
               }
-              break;
             }
           }
-          if (forceUpdate) this.chart.update();
-        } else this.initChart();
+        }
+
+        // Update chart view
+        this.model.set("chartjsOptions", this.chart);
+        this.model.trigger("change:chartjsOptions");
       },
       addDataset() {
         if (!this.chart.data.datasets) this.chart.data.datasets = [];
@@ -467,7 +457,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
       removeDataset(index: number): void {
         if (this.chart.data.datasets[index] != null) {
           this.chart.data.datasets.splice(index, 1);
-          this.chart.update();
+          this.model.set("chartjsOptions", this.chart);
         }
       },
       updateChartDatasetData(value: string, index: number): void {
@@ -675,14 +665,6 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
             this.chart.data.datasets[index].data = [...results];
           }
         }
-      },
-      addCanvas(): void {
-        // Remove any childs from the div
-        if (this.el.hasChildNodes()) this.el.innerHTML = "";
-        const canvas = document.createElement("canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        this.el.appendChild(canvas);
       },
     },
   });
