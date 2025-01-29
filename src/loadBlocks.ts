@@ -1,6 +1,7 @@
 import type { Editor } from "grapesjs";
 import { CHARTS, CHART_TYPE } from "./constants";
 import icons from "./icons";
+import { getI18nName } from "./utils";
 
 export default async (editor: Editor) => {
   const bm = editor.BlockManager;
@@ -8,12 +9,10 @@ export default async (editor: Editor) => {
     const type = chart.type ?? "bar";
     const blockType = `chartjs-${type}`;
     const icon = icons[chart.type];
-    const label =
-      chart.blockLabel ??
-      `${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
+
     bm.add(blockType, {
-      label,
-      category: "Charts",
+      label: getI18nName(editor, `blocks.${type}`),
+      category: getI18nName(editor, "category"),
       content: {
         tagName: "div",
         type: "chartjs",

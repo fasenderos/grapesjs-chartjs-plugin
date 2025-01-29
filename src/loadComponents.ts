@@ -30,6 +30,7 @@ import {
   REMOVE_DATASET,
 } from "./constants";
 import { addColorTrait } from "./loadTraits";
+import { getI18nName } from "./utils";
 
 type UpdateChartDatasetBorderWidthProps = {
   borderWidth: number;
@@ -46,7 +47,10 @@ type UpdateChartDatasetColorProps = {
 
 export default (editor: Editor, options: ChartjsPluginOptions) => {
   const domc = editor.DomComponents;
-  const chartSettingCategory = { id: "cjs-common", label: "Chart Settings" };
+  const chartSettingCategory = {
+    id: "cjs-common",
+    label: getI18nName(editor, "traits.chartSettings"),
+  };
 
   domc.addType("chartjs", {
     model: {
@@ -79,23 +83,23 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
           const traits: TraitProperties[] = [
             {
               type: "text",
-              label: "Title",
+              label: getI18nName(editor, "traits.title"),
               name: CHART_TITLE,
               category: chartSettingCategory,
               value: DEFAULT_OPTIONS.title,
-              placeholder: "Chart title",
+              placeholder: DEFAULT_OPTIONS.title,
             },
             {
               type: "text",
-              label: "Subtitle",
+              label: getI18nName(editor, "traits.subtitle"),
               name: CHART_SUBTITLE,
               category: chartSettingCategory,
               value: DEFAULT_OPTIONS.subtitle,
-              placeholder: "Chart subtitle",
+              placeholder: DEFAULT_OPTIONS.title,
             },
             {
               type: "number",
-              label: "Width",
+              label: getI18nName(editor, "traits.width"),
               name: CHART_WIDTH,
               category: chartSettingCategory,
               value: DEFAULT_OPTIONS.width,
@@ -103,7 +107,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
             },
             {
               type: "number",
-              label: "Height",
+              label: getI18nName(editor, "traits.height"),
               name: CHART_HEIGHT,
               category: chartSettingCategory,
               value: DEFAULT_OPTIONS.height,
@@ -111,7 +115,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
             },
             {
               type: "button",
-              text: "Add Data Set",
+              text: getI18nName(editor, "traits.addDataset"),
               full: true,
               name: ADD_DATASET,
               category: chartSettingCategory,
@@ -126,7 +130,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
           if (datasetType === "labels-data") {
             traits.unshift({
               type: "text",
-              label: "Labels",
+              label: getI18nName(editor, "traits.datasetLabels"),
               name: CHART_LABELS,
               category: chartSettingCategory,
               value: chartSettings?.defaultLabels ?? DEFAULT_OPTIONS.labels,
@@ -210,13 +214,13 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         const newTraitsGroup: TraitProperties[] = [];
         const category = {
           id: `cjs-dataset-options-${id}`,
-          label: `#${id} Dataset`,
+          label: `#${id} ${getI18nName(editor, "traits.dataset")}`,
           open: id === 1,
         };
         if (id > 1) {
           newTraitsGroup.push({
             type: "button",
-            text: "Remove Dataset",
+            text: getI18nName(editor, "traits.removeDataset"),
             full: true,
             name: `${REMOVE_DATASET}-${id}`,
             category,
@@ -239,7 +243,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         }
         newTraitsGroup.push({
           type: "text",
-          label: "Name",
+          label: getI18nName(editor, "traits.datasetName"),
           name: `${DATASET_LABEL}-${id}`,
           category,
           value: `#${id} ${DEFAULT_OPTIONS.label}`,
@@ -248,7 +252,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         if (datasetType !== "labels-data") {
           newTraitsGroup.push({
             type: "text",
-            label: "Labels",
+            label: getI18nName(editor, "traits.datasetLabels"),
             name: `${CHART_LABELS}-${id}`,
             category,
             value: chartOptions.defaultLabels ?? DEFAULT_OPTIONS.labels,
@@ -257,7 +261,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         }
         newTraitsGroup.push({
           type: "text",
-          label: "Values",
+          label: getI18nName(editor, "traits.datasetData"),
           name: `${DATASET_DATA}-${id}`,
           category,
           value: chartOptions.defaultData ?? DEFAULT_OPTIONS.data,
@@ -266,18 +270,27 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         newTraitsGroup.push({
           type: "cjs-add-color-button",
           name: `${ADD_BACKGROUND}-${id}`,
-          label: chartOptions?.backgroundColor?.label ?? "Add Background Color",
+          label: getI18nName(
+            editor,
+            `traits.${chartOptions?.backgroundColor?.label ?? "addBackgroundColor"}`,
+          ),
           category,
         });
         newTraitsGroup.push({
           type: "cjs-add-color-button",
           name: `${ADD_BORDER}-${id}`,
-          label: chartOptions?.borderColor?.label ?? "Add Border Color",
+          label: getI18nName(
+            editor,
+            `traits.${chartOptions?.borderColor?.label ?? "addBorderColor"}`,
+          ),
           category,
         });
         newTraitsGroup.push({
           type: "number",
-          label: chartOptions?.borderWidth?.label ?? "Border Width",
+          label: getI18nName(
+            editor,
+            `traits.${chartOptions?.borderWidth?.label ?? "borderWidth"}`,
+          ),
           name: `${DATASET_BORDER_WIDTH}-${id}`,
           value: chartOptions?.borderWidth?.value ?? 0,
           placeholder: chartOptions?.borderWidth?.placeholder ?? "0",
@@ -295,9 +308,10 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
             newTraitsGroup.push({
               ...traitOptions,
               type,
-              label:
-                traitOptions?.label ??
-                `${property.charAt(0).toUpperCase() + property.slice(1)}`,
+              label: getI18nName(
+                editor,
+                `traits.${traitOptions?.label ?? property}`,
+              ),
               name: `${DATASET_OPTIONAL_PROPERTY}-${property}-${id}`,
               category,
             });

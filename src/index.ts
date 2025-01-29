@@ -3,6 +3,7 @@ import type { Editor } from "grapesjs";
 import loadBlocks from "./loadBlocks";
 import loadComponents from "./loadComponents";
 import { loadTraits } from "./loadTraits";
+import en from "./locale/en";
 import style from "./style";
 
 export type ChartjsPluginOptions = {
@@ -26,6 +27,11 @@ export default (editor: Editor, opts: ChartjsPluginOptions = {}) => {
     },
     ...opts,
   };
+
+  editor.I18n.addMessages({
+    en,
+    ...opts.i18n,
+  });
 
   // Add traits
   loadTraits(editor);

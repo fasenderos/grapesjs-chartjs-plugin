@@ -37,6 +37,8 @@
   "license": "MIT",
   "files": [
     "dist",
+    "locale",
+    "AUTHORS",
     "CHANGELOG.md",
     "LICENSE",
     "README.md",

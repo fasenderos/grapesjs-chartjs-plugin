@@ -4,6 +4,7 @@ import {
   DATASET_BACKGROUND_COLOR,
   DATASET_BORDER_COLOR,
 } from "./constants";
+import { getI18nName } from "./utils";
 
 const loadTraits = (editor: Editor) => {
   const tm = editor.TraitManager;
@@ -13,7 +14,8 @@ const loadTraits = (editor: Editor) => {
       return "";
     },
     createInput({ trait, component }) {
-      const label = trait.attributes.label ?? "Add Color";
+      const label =
+        trait.attributes.label ?? getI18nName(editor, "traits.addColor");
       const el = document.createElement("div");
       const handleRemoveColorTrait = () => {
         removeColorTrait(component, trait);
@@ -26,10 +28,10 @@ const loadTraits = (editor: Editor) => {
                 ${label}
             </span>
             <div class="cjs-button-container">
-              <button title="Remove Color" type="button" class="cjs-button cjs-button-disabled" data-cjs-remove-color>
+              <button title="${getI18nName(editor, "traits.removeColor")}" type="button" class="cjs-button cjs-button-disabled" data-cjs-remove-color>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14"></path></svg>
               </button>
-              <button title="Add Color" type="button" class="cjs-button" data-cjs-add-color>
+              <button title="${getI18nName(editor, "traits.addColor")}" type="button" class="cjs-button" data-cjs-add-color>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m-7-7h14"></path></svg>
               </button>
           </div>

@@ -1,6 +1,8 @@
 import type { ChartOptions, ChartType } from "chart.js";
 import type { TraitProperties } from "grapesjs";
 
+export const PLUGIN = "grapesjs-chartjs-plugin";
+
 export const ADD_DATASET = "cjs-add-dataset";
 export const REMOVE_DATASET = "cjs-remove-dataset";
 export const ADD_BACKGROUND = "cjs-add-background-color";
@@ -42,7 +44,6 @@ export type ChartComponentOptions = {
   datasetType?: DatasetType;
   defaultLabels?: string;
   defaultData?: string;
-  blockLabel?: string;
   chartjsOptions?: ChartOptions;
   optionalDatasetProperties?: ChartOptionalDatasetProperties[];
   backgroundColor?: TraitProperties;
@@ -54,9 +55,9 @@ export const CHARTS: ChartComponentOptions[] = [
   { type: "bar" },
   {
     type: "line",
-    backgroundColor: { label: "Add Point Color" },
-    borderColor: { label: "Add Line Color" },
-    borderWidth: { label: "Line Width", placeholder: "1", value: 1 },
+    backgroundColor: { label: "addPointColor" },
+    borderColor: { label: "addLineColor" },
+    borderWidth: { label: "lineWidth", placeholder: "1", value: 1 },
     optionalDatasetProperties: [
       { property: "fill", type: "checkbox" },
       {
@@ -74,19 +75,18 @@ export const CHARTS: ChartComponentOptions[] = [
     type: "pie",
     defaultLabels: "Jan, Feb, Mar",
     defaultData: "300, 50, 100",
-    backgroundColor: { label: "Add Segment Color" },
+    backgroundColor: { label: "addSegmentColor" },
     borderWidth: { placeholder: "1", value: 1 },
   },
   {
     type: "doughnut",
     defaultLabels: "Jan, Feb, Mar",
     defaultData: "300, 50, 100",
-    backgroundColor: { label: "Add Segment Color" },
+    backgroundColor: { label: "addSegmentColor" },
     borderWidth: { placeholder: "1", value: 1 },
   },
   {
     type: "polarArea",
-    blockLabel: "Polar Area Chart",
     borderWidth: { placeholder: "1", value: 1 },
   },
   {
@@ -103,7 +103,7 @@ export const CHARTS: ChartComponentOptions[] = [
       {
         property: "radial",
         type: "text",
-        traitOptions: { value: "15, 5, 30, 10", label: "Radius" },
+        traitOptions: { value: "15, 5, 30, 10", label: "radius" },
       },
     ],
   },
