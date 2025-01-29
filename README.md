@@ -11,14 +11,7 @@
 
 * Plugin name: `grapesjs-chartjs-plugin`
 * Components
-    * `chartjs-bar`
-    * `chartjs-line`
-    * `chartjs-pie`
-    * `chartjs-doughnut`
-    * `chartjs-polarArea`
-    * `chartjs-radar`
-    * `chartjs-bubble`
-    * `chartjs-scatter`
+    * `chartjs`
 * Blocks
     * `chartjs-bar`
     * `chartjs-line`

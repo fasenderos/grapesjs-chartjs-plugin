@@ -1,5 +1,5 @@
 import type { Editor } from "grapesjs";
-import { CHART_TYPE, CHARTS } from "./constants";
+import { CHARTS, CHART_TYPE } from "./constants";
 import icons from "./icons";
 
 export default async (editor: Editor) => {

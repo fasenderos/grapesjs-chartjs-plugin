@@ -6,10 +6,12 @@ import type {
   TraitProperties,
 } from "grapesjs";
 import type { ChartjsPluginOptions } from ".";
+import { loadChartJs } from "./charjsLoader";
 import {
   ADD_BACKGROUND,
   ADD_BORDER,
   ADD_DATASET,
+  CHARTS,
   CHART_HEIGHT,
   CHART_LABELS,
   CHART_SUBTITLE,
@@ -17,18 +19,16 @@ import {
   CHART_TYPE,
   CHART_WIDTH,
   type ChartComponentOptions,
-  CHARTS,
   DATASET_BACKGROUND_COLOR,
   DATASET_BORDER_COLOR,
   DATASET_BORDER_WIDTH,
   DATASET_DATA,
   DATASET_LABEL,
   DATASET_OPTIONAL_PROPERTY,
-  type DatasetType,
   DEFAULT_OPTIONS,
+  type DatasetType,
   REMOVE_DATASET,
 } from "./constants";
-import { loadChartJs } from "./charjsLoader";
 import { addColorTrait } from "./loadTraits";
 
 type UpdateChartDatasetBorderWidthProps = {
