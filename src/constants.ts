@@ -19,6 +19,16 @@ export const DATASET_BORDER_COLOR = "cjs-dataset-border-color";
 export const DATASET_BORDER_WIDTH = "cjs-dataset-border-width";
 export const DATASET_OPTIONAL_PROPERTY = "cjs-dataset-custom";
 
+export const DEFAULT_OPTIONS = {
+  data: "65, 59, 80, 81, 56",
+  label: "My Dataset",
+  labels: "Jan, Feb, Mar, Apr, May",
+  width: 300,
+  height: 300,
+  title: undefined,
+  subtitle: undefined,
+};
+
 type ChartOptionalDatasetProperties = {
   property: string;
   type: "text" | "number" | "select" | "checkbox" | "color" | "button";

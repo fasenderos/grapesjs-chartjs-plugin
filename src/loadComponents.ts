@@ -25,6 +25,7 @@ import {
   DATASET_LABEL,
   DATASET_OPTIONAL_PROPERTY,
   type DatasetType,
+  DEFAULT_OPTIONS,
   REMOVE_DATASET,
 } from "./constants";
 import { loadChartJs } from "./charjsLoader";
@@ -41,16 +42,6 @@ type UpdateChartDatasetColorProps = {
   borderColor?: string;
   index: number;
   colorIndex: number;
-};
-
-const DEFAULT_OPTIONS = {
-  data: "65, 59, 80, 81, 56",
-  label: "My Dataset",
-  labels: "Jan, Feb, Mar, Apr, May",
-  width: 300,
-  height: 300,
-  title: undefined,
-  subtitle: undefined,
 };
 
 export default (editor: Editor, options: ChartjsPluginOptions) => {
@@ -70,8 +61,11 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
           cr: false,
           onEnd: (_ev: Event, { el }: CallbackOptions) => {
             const component = editor.getSelected();
-            component?.addAttributes({ CHART_WIDTH: el.offsetWidth });
-            component?.addAttributes({ CHART_HEIGHT: el.offsetHeight });
+            const { offsetHeight: height, offsetWidth: width } = el;
+            const traitWidth = component?.getTrait(CHART_WIDTH);
+            const traitHeight = component?.getTrait(CHART_HEIGHT);
+            traitWidth?.setValue(width);
+            traitHeight?.setValue(height);
           },
         },
         unstylable: ["width", "height"],
@@ -124,7 +118,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
               command(editor: Editor) {
                 const component = editor.getSelected();
                 // @ts-ignore
-                component?.view?.addNewTraitGroup(component);
+                component?.addNewDatasetTraitsGroup();
               },
             },
           ];
@@ -146,7 +140,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
       init() {
         const alreadyLoaded = this.getTrait(`${DATASET_DATA}-1`);
         if (alreadyLoaded == null) {
-          this.addNewTraitGroup();
+          this.addNewDatasetTraitsGroup();
         } else {
           const attributes = this.getAttributes();
           let dataSetCount = 0;
@@ -155,7 +149,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
             if (fieldId) {
               const id = Number.parseInt(fieldId);
               if (id > dataSetCount) {
-                this.addNewTraitGroup();
+                this.addNewDatasetTraitsGroup();
                 dataSetCount++;
               }
               const parent = key.includes(DATASET_BACKGROUND_COLOR)
@@ -180,19 +174,27 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         // @ts-ignore
         component.view.updateChart();
       },
-      addNewTraitGroup() {
-        const newTraitsGroup = this.getNewTraitsGroup();
-        this.addTrait(newTraitsGroup.group);
+      addNewDatasetTraitsGroup() {
+        const newTraitsGroup =
+          this.getNewDatasetTraitsGroup() as TraitProperties[];
+        this.addTrait(newTraitsGroup);
+        const newAttributes = newTraitsGroup.reduce(
+          (acc, curr) => {
+            if (curr.name && curr.value) {
+              acc[curr.name] = curr.value;
+            }
+            return acc;
+          },
+          {} as Record<string, unknown>,
+        );
+        if (Object.keys(newTraitsGroup).length)
+          this.addAttributes(newAttributes);
       },
-      getNewTraitsGroup(): {
-        group: TraitProperties[];
-        id: number;
-      } {
-        const options = this.get(
+      getNewDatasetTraitsGroup(): TraitProperties[] {
+        const chartOptions = this.get(
           "chartComponentOptions",
         ) as ChartComponentOptions;
-        const attributes = this.getAttributes() ?? {};
-        const datasetType = options.datasetType ?? "labels-data";
+        const datasetType = chartOptions.datasetType ?? "labels-data";
 
         let last = 0;
         for (const trait of this.getTraits() ?? []) {
@@ -240,68 +242,56 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
           label: "Name",
           name: `${DATASET_LABEL}-${id}`,
           category,
+          value: `#${id} ${DEFAULT_OPTIONS.label}`,
           placeholder: DEFAULT_OPTIONS.label,
         });
-        const newAttributes: Record<string, string> = {};
-        if (!attributes[`${DATASET_LABEL}-${id}`]) {
-          newAttributes[`${DATASET_LABEL}-${id}`] =
-            `#${id} ${DEFAULT_OPTIONS.label}`;
-        }
         if (datasetType !== "labels-data") {
           newTraitsGroup.push({
             type: "text",
             label: "Labels",
             name: `${CHART_LABELS}-${id}`,
             category,
-            placeholder: options.defaultLabels ?? DEFAULT_OPTIONS.labels,
+            value: chartOptions.defaultLabels ?? DEFAULT_OPTIONS.labels,
+            placeholder: chartOptions.defaultLabels ?? DEFAULT_OPTIONS.labels,
           });
-          if (!attributes[`${CHART_LABELS}-${id}`]) {
-            newAttributes[`${CHART_LABELS}-${id}`] =
-              options.defaultLabels ?? DEFAULT_OPTIONS.labels;
-          }
         }
         newTraitsGroup.push({
           type: "text",
           label: "Values",
           name: `${DATASET_DATA}-${id}`,
           category,
-          placeholder: options.defaultData ?? DEFAULT_OPTIONS.data,
+          value: chartOptions.defaultData ?? DEFAULT_OPTIONS.data,
+          placeholder: chartOptions.defaultData ?? DEFAULT_OPTIONS.data,
         });
-        if (!attributes[`${DATASET_DATA}-${id}`]) {
-          newAttributes[`${DATASET_DATA}-${id}`] =
-            options.defaultData ?? DEFAULT_OPTIONS.data;
-        }
         newTraitsGroup.push({
           type: "cjs-add-color-button",
           name: `${ADD_BACKGROUND}-${id}`,
-          label: options?.backgroundColor?.label ?? "Add Background Color",
+          label: chartOptions?.backgroundColor?.label ?? "Add Background Color",
           category,
         });
         newTraitsGroup.push({
           type: "cjs-add-color-button",
           name: `${ADD_BORDER}-${id}`,
-          label: options?.borderColor?.label ?? "Add Border Color",
+          label: chartOptions?.borderColor?.label ?? "Add Border Color",
           category,
         });
         newTraitsGroup.push({
           type: "number",
-          label: options?.borderWidth?.label ?? "Border Width",
+          label: chartOptions?.borderWidth?.label ?? "Border Width",
           name: `${DATASET_BORDER_WIDTH}-${id}`,
-          placeholder: options?.borderWidth?.placeholder ?? "0",
-          min: options?.borderWidth?.min ?? 0,
+          value: chartOptions?.borderWidth?.value ?? 0,
+          placeholder: chartOptions?.borderWidth?.placeholder ?? "0",
+          min: chartOptions?.borderWidth?.min ?? 0,
           category,
         });
-        if (!attributes[`${DATASET_BORDER_WIDTH}-${id}`]) {
-          newAttributes[`${DATASET_BORDER_WIDTH}-${id}`] =
-            options?.borderWidth?.value ?? 0;
-        }
-        if (options?.optionalDatasetProperties?.length) {
+
+        if (chartOptions?.optionalDatasetProperties?.length) {
           for (const {
             property,
             type,
             traitOptions,
             ...rest
-          } of options.optionalDatasetProperties) {
+          } of chartOptions.optionalDatasetProperties) {
             newTraitsGroup.push({
               ...traitOptions,
               type,
@@ -313,9 +303,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
             });
           }
         }
-        if (Object.keys(newTraitsGroup).length)
-          this.addAttributes(newAttributes);
-        return { group: newTraitsGroup, id };
+        return newTraitsGroup;
       },
     },
     view: {
@@ -355,8 +343,6 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
         for (const name in restTraits) {
           if (Object.prototype.hasOwnProperty.call(restTraits, name)) {
             const trait = restTraits[name];
-            console.log("attribute", name, trait.getValue());
-
             const value = trait.getValue();
             const splitTrait = name.split("-") as string[];
             const fieldNumber = Number.parseInt(
@@ -437,8 +423,10 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
             }
           }
         }
-
         // Update chart view
+        this.updateChartView();
+      },
+      updateChartView() {
         this.model.set("chartjsOptions", this.chart);
         this.model.trigger("change:chartjsOptions");
       },
@@ -457,7 +445,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
       removeDataset(index: number): void {
         if (this.chart.data.datasets[index] != null) {
           this.chart.data.datasets.splice(index, 1);
-          this.model.set("chartjsOptions", this.chart);
+          this.updateChartView();
         }
       },
       updateChartDatasetData(value: string, index: number): void {
@@ -639,12 +627,7 @@ export default (editor: Editor, options: ChartjsPluginOptions) => {
                 ? coordiantes[1]
                 : coordiantes[2];
           if (axis != null) {
-            const oldValues = [
-              ...(this.chart.data.datasets[index].data as Record<
-                string,
-                unknown
-              >[]),
-            ];
+            const oldValues = [...(this.chart.data.datasets[index].data ?? [])];
             const newValues =
               value?.split(",").map((x) => Number.parseFloat(x.trim())) ?? [];
             const maxLength =

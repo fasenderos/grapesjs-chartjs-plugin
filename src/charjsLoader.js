@@ -1,6 +1,5 @@
 // this file should be in plain javascript to avoit strange behavior with webpack
 export function loadChartJs(props) {
-  console.log("PROPS", props);
   // biome-ignore lint/complexity/noUselessThisAlias: <explanation>
   const el = this;
   const init = () => {

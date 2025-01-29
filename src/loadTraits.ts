@@ -64,7 +64,7 @@ const addColorTrait = (component: Component, trait: Trait) => {
       const removeButton = getRemoveButton(trait);
       if (removeButton) removeButton.classList.remove("cjs-button-disabled");
     }
-    const addedTrait = component?.addTrait(
+    component.addTrait(
       [
         {
           type: "color",
@@ -75,22 +75,6 @@ const addColorTrait = (component: Component, trait: Trait) => {
       ],
       { at },
     )[0];
-    const handleChangeColor = (
-      trait: Trait,
-      value: string | number,
-      opts: { fromInput?: 1; avoidStore?: 1; fromTarget?: 1 },
-    ) => {
-      if (
-        (opts.fromInput === 1 ||
-          opts.avoidStore === undefined ||
-          opts.fromTarget === 1) &&
-        value !== 0
-      ) {
-        // @ts-ignore
-        component.view?.updateChart();
-      }
-    };
-    addedTrait.on("change:value", handleChangeColor);
   }
 };
 
@@ -108,7 +92,6 @@ const removeColorTrait = (component: Component, trait: Trait) => {
       const traitId = getColorTraitName(isBg, counter - 1, id);
       const traitToBeRemoved = component.getTrait(traitId);
       traitToBeRemoved.setValue("");
-      traitToBeRemoved.off("change:value");
       component.removeTrait(traitId);
     }
   }
