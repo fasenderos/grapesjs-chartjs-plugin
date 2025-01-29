@@ -6,7 +6,7 @@ import type {
   TraitProperties,
 } from "grapesjs";
 import type { ChartjsPluginOptions } from ".";
-import { loadChartJs } from "./charjsLoader";
+import { loadChartJs } from "./chartjsLoader";
 import {
   ADD_BACKGROUND,
   ADD_BORDER,

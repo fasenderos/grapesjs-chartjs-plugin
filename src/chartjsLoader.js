@@ -1,4 +1,4 @@
-// this file should be in plain javascript to avoit strange behavior with webpack
+// this file should be in plain javascript to avoit strange behavior with webpack in editor canvas
 export function loadChartJs(props) {
   // biome-ignore lint/complexity/noUselessThisAlias: <explanation>
   const el = this;
