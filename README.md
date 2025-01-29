@@ -23,10 +23,10 @@
 
 ## Options
 
-| Option           | Description                                                                                                                                             | Default                                                                                                |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `chartjsOptions` | This object will be passed directly to the underlying Chart.js `options`. [See here for more info](https://www.chartjs.org/docs/latest/configuration/). | `{ maintainAspectRatio: false }`                                                                       |
-| `i18n`           | Object used to translate plugin properties. Check the `en` locale file and follow its inner path.                                                       | [`src/locale/en.js`](https://github.com/fasenderos/grapesjs-chartjs-plugin/blob/main/src/locale/en.js) |
+| Option           | Description                                                                                                                                             | Default                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| `chartjsOptions` | This object will be passed directly to the underlying Chart.js `options`. [See here for more info](https://www.chartjs.org/docs/latest/configuration/). | `{ maintainAspectRatio: false }`       |
+| `i18n`           | Object used to translate plugin properties. Check the `en` locale file and follow its inner path.                                                       | [`src/locale/en.js`](src/locale/en.js) |
 
 ## Download
 
