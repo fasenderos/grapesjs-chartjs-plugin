@@ -1,6 +1,6 @@
-# Grapesjs Chartjs Plugin
+# GrapesJS [Chart.js](https://www.chartjs.org/) Plugin
 
-### [Chart.js](https://www.chartjs.org/) plugin for Grapesjs
+With this plugin you can add various types of charts to your projects within the GrapesJS editor.
 
 [DEMO](https://codesandbox.io/p/sandbox/grapesjs-chartjs-plugin-jxy3qk)
 
