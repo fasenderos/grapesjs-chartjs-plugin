@@ -36,7 +36,7 @@ export default (editor: Editor, opts: ChartjsPluginOptions = {}) => {
   loadBlocks(editor);
   // Load i18n files
   editor.I18n?.addMessages({
-      en,
-      ...options.i18n,
-    });
+    en,
+    ...options.i18n,
+  });
 };
