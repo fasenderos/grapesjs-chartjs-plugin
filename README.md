@@ -1,10 +1,28 @@
-# GrapesJS [Chart.js](https://www.chartjs.org/) Plugin
+<p align="center">
+    <a href="https://www.npmjs.com/package/grapesjs-chartjs-plugin" target="_blank"><img src="https://img.shields.io/npm/v/grapesjs-chartjs-plugin?color=blue" alt="NPM Version"></a>
+    <a href="https://github.com/fasenderos/grapesjs-chartjs-plugin/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/npm/l/grapesjs-chartjs-plugin" alt="Package License"></a>
+    <a href="https://www.npmjs.com/package/grapesjs-chartjs-plugin" target="_blank"><img src="https://img.shields.io/npm/dm/grapesjs-chartjs-plugin" alt="NPM Downloads"></a>
+    <a href="https://github.com/fasenderos/grapesjs-chartjs-plugin"><img src="https://badgen.net/badge/icon/typescript?icon=typescript&label" alt="Built with TypeScript"></a>
+</p>
 
-With this plugin you can add various types of charts to your projects within the GrapesJS editor.
+# GrapesJS Chart.js Plugin
+
+This plugin integrates [Chart.js](https://www.chartjs.org/) into your GrapesJS editor :rocket::rocket:. You can add various types of charts :bar_chart: to your projects and customize them according to your needs. 
 
 [DEMO](https://codesandbox.io/p/sandbox/grapesjs-chartjs-plugin-jxy3qk)
 
-![Image](https://github.com/user-attachments/assets/4fc965dd-0f8d-4fb8-9e1d-a41a308e9471)
+<p align="center">
+:star: Star me on GitHub — it motivates me a lot!
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4fc965dd-0f8d-4fb8-9e1d-a41a308e9471" width="90%">
+</p>
+
+<p align="center">
+  <img align="top" src="https://github.com/user-attachments/assets/8adeb7cc-c4e2-44c3-bd56-2815d166d070" width="45%">
+  <img src="https://github.com/user-attachments/assets/bad77bd3-0d7e-40d1-afd5-fee0eea836c2" width="45%">
+</p>
 
 ## Summary
 

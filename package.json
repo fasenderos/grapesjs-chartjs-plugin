@@ -1,7 +1,7 @@
 {
   "name": "grapesjs-chartjs-plugin",
   "version": "0.1.0",
-  "description": "Grapesjs Chartjs Plugin",
+  "description": "GrapesJS Plugin to integrate Chart.js into your GrapesJS editor.",
   "main": "dist/index.js",
   "author": "Andrea Fassina <fasenderos@gmail.com>",
   "repository": {
@@ -20,10 +20,18 @@
     "start": "grapesjs-cli serve"
   },
   "keywords": [
+    "grapesjs chartjs plugin",
+    "grapesjs chartjs",
+    "grapesjs chart.js plugin",
+    "grapesjs chart.js",
+    "grapesjs charts",
     "grapesjs",
-    "plugin",
     "chartjs",
     "chart.js",
+    "grapesjs plugin",
+    "grapesjs plugin chartjs",
+    "grapesjs plugin chart.js",
+    "grapesjs plugin charts",
     "charts"
   ],
   "devDependencies": {

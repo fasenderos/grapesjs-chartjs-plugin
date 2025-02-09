@@ -28,15 +28,15 @@ export default (editor: Editor, opts: ChartjsPluginOptions = {}) => {
     ...opts,
   };
 
-  editor.I18n.addMessages({
-    en,
-    ...opts.i18n,
-  });
-
   // Add traits
   loadTraits(editor);
   // Add components
   loadComponents(editor, options);
   // Add blocks
   loadBlocks(editor);
+  // Load i18n files
+  editor.I18n?.addMessages({
+      en,
+      ...options.i18n,
+    });
 };
