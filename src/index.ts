@@ -1,11 +1,11 @@
 import type { ChartOptions } from "chart.js";
 import type { BlockProperties, Editor } from "grapesjs";
+import { CHARTS } from "./constants";
 import loadBlocks from "./loadBlocks";
 import loadComponents from "./loadComponents";
 import { loadTraits } from "./loadTraits";
 import en from "./locale/en";
 import style from "./style";
-import { CHARTS } from "./constants";
 
 export type ChartjsPluginOptions = {
   /**

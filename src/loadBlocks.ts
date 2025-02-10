@@ -1,8 +1,8 @@
-import type { Editor, BlockCategoryProperties } from "grapesjs";
+import type { BlockCategoryProperties, Editor } from "grapesjs";
+import type { ChartjsPluginOptions } from ".";
 import { CHARTS, CHART_TYPE } from "./constants";
 import icons from "./icons";
 import { getI18nName } from "./utils";
-import type { ChartjsPluginOptions } from ".";
 
 export default async (
   editor: Editor,
