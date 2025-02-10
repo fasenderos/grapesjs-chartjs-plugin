@@ -44,7 +44,9 @@ This plugin integrates [Chart.js](https://www.chartjs.org/) into your GrapesJS e
 | Option           | Description                                                                                                                                             | Default                                |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | `chartjsOptions` | This object will be passed directly to the underlying Chart.js `options`. [See here for more info](https://www.chartjs.org/docs/latest/configuration/). | `{ maintainAspectRatio: false }`       |
-| `i18n`           | Object used to translate plugin properties. Check the `en` locale file and follow its inner path.                                                       | [`src/locale/en.js`](src/locale/en.js) |
+| `blocks`           | Which blocks to add.                                                       | `[ "chartjs-bar", "chartjs-line", "chartjs-pie", "chartjs-doughnut", "chartjs-polarArea", "chartjs-radar", "chartjs-bubble", "chartjs-scatter" ]` |
+| `category`           | Category name. By default the `category` value of the i18n [`en`](src/locale/en.js) locale file will be used.                                                          | `{ id: 'chartjs', label: "Charts" }` |
+| `i18n`           | Object used to translate plugin properties. Check the `en` locale file and follow its inner path.                                                       | [`en`](src/locale/en.js) |
 
 ## Download
 

@@ -45,7 +45,7 @@ type UpdateChartDatasetColorProps = {
   colorIndex: number;
 };
 
-export default (editor: Editor, options: ChartjsPluginOptions) => {
+export default (editor: Editor, options: Required<ChartjsPluginOptions>) => {
   const domc = editor.DomComponents;
   const chartSettingCategory = {
     id: "cjs-common",
