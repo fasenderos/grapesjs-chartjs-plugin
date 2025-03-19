@@ -1,6 +1,6 @@
 {
   "name": "grapesjs-chartjs-plugin",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "GrapesJS Plugin to integrate Chart.js into your GrapesJS editor.",
   "main": "dist/index.js",
   "author": "Andrea Fassina <fasenderos@gmail.com>",
