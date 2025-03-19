@@ -625,7 +625,7 @@ export default (editor: Editor, options: Required<ChartjsPluginOptions>) => {
               : [];
           } else {
             this.chart.data.datasets[index].data = value
-              ? value.split(",").map((x) => Number.parseFloat(x.trim()))
+              ? value.split(",").map((x) => x.trim())
               : [];
           }
         } else {
@@ -642,8 +642,7 @@ export default (editor: Editor, options: Required<ChartjsPluginOptions>) => {
                 : coordiantes[2];
           if (axis != null) {
             const oldValues = [...(this.chart.data.datasets[index].data ?? [])];
-            const newValues =
-              value?.split(",").map((x) => Number.parseFloat(x.trim())) ?? [];
+            const newValues = value?.split(",").map((x) => x.trim()) ?? [];
             const maxLength =
               newValues.length >= oldValues.length
                 ? newValues.length
